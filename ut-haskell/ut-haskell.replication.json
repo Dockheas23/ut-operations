@@ -1,0 +1,22 @@
+{
+    "id": "ut-haskell",
+    "kind": "ReplicationController",
+    "apiVersion": "v1beta1",
+    "desiredState": {
+        "replicas": 1,
+        "replicaSelector": {"name": "ut-haskell"},
+        "podTemplate": {
+            "desiredState": {
+                "manifest": {
+                    "containers": [{
+                        "name": "ut-haskell",
+                        "image": "george/ut-haskell:v4",
+                        "ports": [{"containerPort": 8080, "hostPort": 8080}]
+                    }]
+                }
+            },
+            "labels": {"name": "ut-haskell"}
+        }
+    },
+    "labels": {"name": "ut-haskell"}
+}

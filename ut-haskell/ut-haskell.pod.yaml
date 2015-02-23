@@ -1,0 +1,16 @@
+id: ut-haskell
+kind: Pod
+apiVersion: v1beta1
+desiredState:
+    manifest:
+        version: v1beta1
+        id: ut-haskell
+        containers:
+            - name: ut-haskell
+              image: dockheas23/ut-haskell
+              ports:
+                  - name: ut-haskell-port
+                    containerPort: 8080
+                    hostPort: 8001
+labels:
+    name: ut-haskell

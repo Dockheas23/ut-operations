@@ -1,0 +1,20 @@
+id: ut-haskell
+kind: ReplicationController
+apiVersion: v1beta1
+desiredState:
+    replicas: 1
+    replicaSelector:
+        name: ut-haskell
+    podTemplate:
+        desiredState:
+            manifest:
+                containers:
+                    - name: ut-haskell
+                      image: dockheas23/ut-haskell:latest
+                      ports: 
+                          - containerPort: 8080
+                            hostPort: 8001
+        labels:
+            name: ut-haskell
+labels:
+    name: ut-haskell

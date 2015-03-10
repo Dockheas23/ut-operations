@@ -8,6 +8,7 @@ desiredState:
         containers:
             - name: ut-haskell
               image: dockheas23/ut-haskell
+              imagePullPolicy: PullAlways
               ports:
                   - name: ut-haskell-port
                     containerPort: 8080

@@ -1,4 +1,4 @@
-id: ut-haskell
+id: ut-haskell-blue
 kind: ReplicationController
 apiVersion: v1beta1
 desiredState:
@@ -11,10 +11,12 @@ desiredState:
                 containers:
                     - name: ut-haskell
                       image: dockheas23/ut-haskell:latest
+                      imagePullPolicy: PullAlways
                       ports: 
                           - containerPort: 8080
                             hostPort: 8001
         labels:
             name: ut-haskell
+            deployment: blue
 labels:
     name: ut-haskell

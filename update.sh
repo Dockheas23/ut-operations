@@ -1,18 +1,23 @@
 #!/bin/bash
 
 show_state() {
-    gcloud preview container kubectl get $1 | grep ut-haskell
+    gcloud alpha container kubectl get $1 | grep "$2"
 }
 
 wait_for_pods() {
-    show_state rc
-    echo "Waiting 10 seconds for pod to be removed"
+    show_state rc "$1"
+    echo "Waiting 10 seconds for pod state to update"
     sleep 10
     echo "Current pod state..."
-    show_state pods
+    show_state pods "$1"
 }
 
-FROM=$(show_state rc | cut -d' ' -f1 | sed 's/ut-haskell-//')
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <module>"
+    exit
+fi
+
+FROM=$(show_state rc "$1" | cut -d' ' -f1 | sed "s/$1-//")
 if [ $FROM == 'blue' ]; then
     TO=green
 else
@@ -20,19 +25,20 @@ else
 fi
 
 echo "======================================="
+echo " --> $1 <--"
 echo "Switching from $FROM to $TO deployment"
 echo "======================================="
 
 echo "Reducing replica size of $FROM to 0..."
-gcloud preview container kubectl update rc ut-haskell-$FROM \
+gcloud alpha container kubectl update rc "$1-$FROM" \
     --patch='{"apiVersion": "v1beta1", "desiredState": {"replicas": 0}}'
 
-wait_for_pods
+wait_for_pods "$1"
 
 echo "Creating replication controller for ${TO}..."
-gcloud preview container kubectl create -f ut-haskell.repl.${TO}.yaml
+gcloud alpha container kubectl create -f "$1/$1.repl.${TO}.yaml"
 
-wait_for_pods
+wait_for_pods "$1"
 
 echo "Removing $FROM replication controller"
-gcloud preview container kubectl delete rc ut-haskell-$FROM
+gcloud alpha container kubectl delete rc "$1-$FROM"

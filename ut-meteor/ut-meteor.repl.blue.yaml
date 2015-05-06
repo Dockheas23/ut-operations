@@ -1,22 +1,22 @@
-id: ut-haskell-blue
+id: ut-meteor-blue
 kind: ReplicationController
 apiVersion: v1beta1
 desiredState:
     replicas: 1
     replicaSelector:
-        name: ut-haskell
+        name: ut-meteor
     podTemplate:
         desiredState:
             manifest:
                 containers:
-                    - name: ut-haskell
-                      image: dockheas23/ut-haskell:latest
+                    - name: ut-meteor
+                      image: dockheas23/ut-meteor:latest
                       imagePullPolicy: PullAlways
                       ports:
-                          - containerPort: 8080
-                            hostPort: 8001
+                          - containerPort: 3000
+                            hostPort: 8002
         labels:
-            name: ut-haskell
+            name: ut-meteor
             deployment: blue
 labels:
-    name: ut-haskell
+    name: ut-meteor

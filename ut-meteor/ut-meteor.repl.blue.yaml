@@ -13,7 +13,7 @@ desiredState:
                       image: dockheas23/ut-meteor:latest
                       imagePullPolicy: PullAlways
                       ports:
-                          - containerPort: 3000
+                          - containerPort: 80
                             hostPort: 8002
         labels:
             name: ut-meteor

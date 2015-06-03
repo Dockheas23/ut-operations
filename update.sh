@@ -1,7 +1,7 @@
 #!/bin/bash
 
 show_state() {
-    gcloud alpha container kubectl get $1 | grep "$2"
+    kubectl get $1 | grep "$2"
 }
 
 wait_for_pods() {
@@ -30,15 +30,15 @@ echo "Switching from $FROM to $TO deployment"
 echo "======================================="
 
 echo "Reducing replica size of $FROM to 0..."
-gcloud alpha container kubectl update rc "$1-$FROM" \
+kubectl update rc "$1-$FROM" \
     --patch='{"apiVersion": "v1beta1", "desiredState": {"replicas": 0}}'
 
 wait_for_pods "$1"
 
 echo "Creating replication controller for ${TO}..."
-gcloud alpha container kubectl create -f "$1/$1.repl.${TO}.yaml"
+kubectl create -f "$1/$1.repl.${TO}.yaml"
 
 wait_for_pods "$1"
 
 echo "Removing $FROM replication controller"
-gcloud alpha container kubectl delete rc "$1-$FROM"
+kubectl delete rc "$1-$FROM"

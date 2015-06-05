@@ -1,7 +1,10 @@
 #!/bin/bash
 
+API_VERSION=v1beta2
+SERVICE=${1%/}
+
 show_state() {
-    kubectl get $1 | grep "$2"
+    kubectl --api-version=$API_VERSION get "$1" | grep "$2"
 }
 
 wait_for_pods() {
@@ -17,28 +20,27 @@ if [ $# -ne 1 ]; then
     exit
 fi
 
-FROM=$(show_state rc "$1" | cut -d' ' -f1 | sed "s/$1-//")
-if [ $FROM == 'blue' ]; then
+FROM=$(show_state rc "$SERVICE" | cut -d' ' -f1 | sed "s/$SERVICE-//")
+if [ -z $FROM -o $FROM == 'blue' ]; then
     TO=green
 else
     TO=blue
 fi
 
 echo "======================================="
-echo " --> $1 <--"
+echo " --> $SERVICE <--"
 echo "Switching from $FROM to $TO deployment"
 echo "======================================="
 
 echo "Reducing replica size of $FROM to 0..."
-kubectl update rc "$1-$FROM" \
-    --patch='{"apiVersion": "v1beta1", "desiredState": {"replicas": 0}}'
+kubectl --api-version=$API_VERSION resize --replicas=0 rc "$SERVICE-$FROM"
 
-wait_for_pods "$1"
+wait_for_pods "$SERVICE"
 
 echo "Creating replication controller for ${TO}..."
-kubectl create -f "$1/$1.repl.${TO}.yaml"
+kubectl --api-version=$API_VERSION create -f "$SERVICE/$SERVICE.repl.${TO}.yaml"
 
-wait_for_pods "$1"
+wait_for_pods "$SERVICE"
 
 echo "Removing $FROM replication controller"
-kubectl delete rc "$1-$FROM"
+kubectl --api-version=$API_VERSION delete rc "$SERVICE-$FROM"

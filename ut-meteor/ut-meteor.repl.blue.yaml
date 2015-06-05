@@ -1,6 +1,6 @@
 id: ut-meteor-blue
 kind: ReplicationController
-apiVersion: v1beta1
+apiVersion: v1beta2
 desiredState:
     replicas: 1
     replicaSelector:

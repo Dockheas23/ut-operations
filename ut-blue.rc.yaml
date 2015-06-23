@@ -1,0 +1,24 @@
+kind: ReplicationController
+apiVersion: v1beta3
+metadata:
+    name: ut-blue
+    labels:
+        deployment: blue
+spec:
+    replicas: 1
+    selector:
+        name: pod-ut-blue
+    template:
+        metadata:
+            labels:
+                name: pod-ut-blue
+                deployment: blue
+        spec:
+            containers:
+                - name: ut-haskell
+                  image: dockheas23/ut-haskell:latest
+                - name: ut-meteor
+                  image: dockheas23/ut-meteor:latest
+                  ports:
+                      - containerPort: 80
+                        hostPort: 8001
